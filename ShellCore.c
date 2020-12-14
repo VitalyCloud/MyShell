@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include "Headers/Builtin.h"
 
@@ -18,12 +19,13 @@ void shellLoop() {
     char **args;
     int status;
     char currentDir[FILENAME_MAX];
-  
+    char userName[80];
     
+    strcpy(userName, getenv("LOGNAME"));
     chdir(getenv("HOME"));
     do {
         getcwd(currentDir, FILENAME_MAX);
-        printf("%s > ", currentDir);
+        printf("(%s) %s > ",userName, currentDir);
         line = shellReadLine();
         args = shellSplitLine(line);
         status = shellExecute(args);
@@ -66,6 +68,7 @@ char** shellSplitLine(char *line) {
 
     token = strtok(line, SHELL_TOK_DELIM);
     while(token != NULL) {
+        
         tokens[position] = token;
         position++;
 
@@ -107,10 +110,20 @@ int shellLaunch(char **args) {
     return 1;
 }
 
+int parseSetEnv(char*);
+
 int shellExecute(char **args) {
     int i;
     if(args[0] == NULL) {
         return 1;
+    }
+    
+    if(strstr(args[0], "=") != NULL) {
+        if(args[1] != NULL) {
+            printf("shell: Expected one argument\n");
+            return 1;
+        }
+        return parseSetEnv(args[0]);
     }
 
     for (i = 0; i < shell_num_builtins(); i++) {
@@ -122,3 +135,25 @@ int shellExecute(char **args) {
     return shellLaunch(args);
 }
 
+int parseSetEnv(char* expresison) {
+    char* delim = "=";
+    
+    char* variableName = strtok(expresison, delim);
+    char* variableValue = strtok(NULL, delim);
+    
+    if(strstr(expresison, "=") - expresison == 0 ) {
+        printf("shell: Variable name must be specified\n");
+        return 1;
+    }
+    if(!variableValue) {
+        printf("shell: Variable value must be specified\n");
+        return 1;
+    }
+    
+    printf("Variable: %s\nValue: %s\n", variableName, variableValue);
+    if(setenv(variableName, variableValue, 1) == -1) {
+        perror("shell: ");
+    }
+
+    return 1;
+}
