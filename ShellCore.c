@@ -53,6 +53,8 @@ char* shellReadLine(void) {
     return line;
 }
 
+void parseGetEnv(char*, char*);
+
 #define SHELL_TOK_BUFFERSIZE 64
 #define SHELL_TOK_DELIM " \t\r\n\a"
 char** shellSplitLine(char *line) {
@@ -69,7 +71,12 @@ char** shellSplitLine(char *line) {
     token = strtok(line, SHELL_TOK_DELIM);
     while(token != NULL) {
         
-        tokens[position] = token;
+        if(token[0] == '$' && token[1] != '\0') {
+            tokens[position] = getenv(token+1);
+        } else {
+            tokens[position] = token;
+        }
+        
         position++;
 
         if(position >= bufferSize) {
@@ -146,14 +153,14 @@ int parseSetEnv(char* expresison) {
         return 1;
     }
     if(!variableValue) {
-        printf("shell: Variable value must be specified\n");
-        return 1;
+        variableValue = "";
     }
     
-    printf("Variable: %s\nValue: %s\n", variableName, variableValue);
+//    printf("Variable: %s\nValue: %s\n", variableName, variableValue);
     if(setenv(variableName, variableValue, 1) == -1) {
         perror("shell: ");
     }
 
     return 1;
 }
+
