@@ -52,7 +52,7 @@ int shell_help(char **args) {
         printf("\t%s\n", builtin_str[i]);
     }
 
-    printf("Use the man command for information n other programs.\n");
+    printf("Use the man command for information on other programs.\n");
     return 1;
 }
 

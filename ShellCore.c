@@ -120,11 +120,11 @@ int shellLaunch(char **args) {
 int parseSetEnv(char*);
 
 int shellExecute(char **args) {
-    int i;
     if(args[0] == NULL) {
         return 1;
     }
     
+    //Setinv variable
     if(strstr(args[0], "=") != NULL) {
         if(args[1] != NULL) {
             printf("shell: Expected one argument\n");
@@ -132,8 +132,9 @@ int shellExecute(char **args) {
         }
         return parseSetEnv(args[0]);
     }
+    // ---------------------
 
-    for (i = 0; i < shell_num_builtins(); i++) {
+    for (int i = 0; i < shell_num_builtins(); i++) {
         if(strcmp(args[0], builtin_str[i]) == 0) {
             return (*builtin_func[i])(args);
         }
