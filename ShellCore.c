@@ -20,7 +20,7 @@ void shellLoop() {
     int status;
     char currentDir[FILENAME_MAX];
     char userName[80];
-    
+
     strcpy(userName, getenv("LOGNAME"));
     chdir(getenv("HOME"));
     do {
@@ -70,13 +70,13 @@ char** shellSplitLine(char *line) {
 
     token = strtok(line, SHELL_TOK_DELIM);
     while(token != NULL) {
-        
+
         if(token[0] == '$' && token[1] != '\0') {
             tokens[position] = getenv(token+1);
         } else {
             tokens[position] = token;
         }
-        
+
         position++;
 
         if(position >= bufferSize) {
@@ -123,7 +123,7 @@ int shellExecute(char **args) {
     if(args[0] == NULL) {
         return 1;
     }
-    
+
     //Setinv variable
     if(strstr(args[0], "=") != NULL) {
         if(args[1] != NULL) {
@@ -145,10 +145,10 @@ int shellExecute(char **args) {
 
 int parseSetEnv(char* expresison) {
     char* delim = "=";
-    
+
     char* variableName = strtok(expresison, delim);
     char* variableValue = strtok(NULL, delim);
-    
+
     if(strstr(expresison, "=") - expresison == 0 ) {
         printf("shell: Variable name must be specified\n");
         return 1;
@@ -156,12 +156,11 @@ int parseSetEnv(char* expresison) {
     if(!variableValue) {
         variableValue = "";
     }
-    
-//    printf("Variable: %s\nValue: %s\n", variableName, variableValue);
+
+   printf("Variable: %s\nValue: %s\n", variableName, variableValue);
     if(setenv(variableName, variableValue, 1) == -1) {
         perror("shell: ");
     }
 
     return 1;
 }
-
