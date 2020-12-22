@@ -98,6 +98,10 @@ char** shellSplitLine(char *line) {
 }
 
 //execvp() won't return unless error, so there's no need for that if.
+//We need if(execvp) for error handling via perror.
+//For example:
+//(fuzrodah) /Users/fuzrodah > qwe
+//shell child: No such file or directory
 int shellLaunch(char **args) {
     pid_t pid, wpid;
     int status;
