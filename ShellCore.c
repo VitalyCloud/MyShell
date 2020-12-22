@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <limits.h>
 
 #include "Headers/Builtin.h"
 
@@ -14,11 +15,13 @@ char*   shellReadLine(void);
 char**  shellSplitLine(char*);
 int     shellExecute(char**);
 
+//There's a LOGIN_NAME_MAX constant, accessible via limits.h.
+//LOGIN_NAME_MAX was not found in limits.h, only _POSIX_HOST_NAME_MAX
 void shellLoop() {
     char *line;
     char **args;
     int status;
-    char currentDir[FILENAME_MAX];
+    char currentDir[_POSIX_HOST_NAME_MAX];
     char userName[80];
 
     strcpy(userName, getenv("LOGNAME"));
@@ -94,6 +97,7 @@ char** shellSplitLine(char *line) {
     return tokens;
 }
 
+//execvp() won't return unless error, so there's no need for that if.
 int shellLaunch(char **args) {
     pid_t pid, wpid;
     int status;
