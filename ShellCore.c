@@ -154,9 +154,26 @@ int parseVariableFunc(char* expression, char* buffer) {
     return 0;
 }
 
+void removeCharFromString(char *p, char c) {
+    if(p==NULL)
+        return;
+    char *pDest = p;
+    while(*p) {
+        if(*p != c)
+            *pDest++ = *p;
+        p++;
+    }
+    *pDest = '\0';
+}
+
 void replaceVariables(char **argv, int size) {
     for(int i=0; i<size; i++) {
+        
         char *line = argv[i];
+        //Remove " and '
+        removeCharFromString(line, '\"');
+        removeCharFromString(line, '\'');
+        
         char *start = strstr(line, "$");
         char *end = strchr(line, '\0');
         if(start != NULL) {
