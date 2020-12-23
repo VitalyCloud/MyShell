@@ -173,6 +173,7 @@ void replaceVariables(char **argv, int size) {
         //Remove " and '
         removeCharFromString(line, '\"');
         removeCharFromString(line, '\'');
+        removeCharFromString(line, '\n');
         
         char *start = strstr(line, "$");
         char *end = strchr(line, '\0');
